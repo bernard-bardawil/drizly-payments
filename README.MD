@@ -56,3 +56,8 @@
 ##  Get Payment
 
     serverless invoke local -f getPayment --data '{ "queryStringParameters": {"payment_id":"04eef56f-8c6b-47ea-88c8-393e63a8d444"}}'
+
+
+## Running tests
+
+    python3 -m pytest
