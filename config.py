@@ -27,7 +27,7 @@ sqs = {
                 "currency":"USD",
                 "type":"merchandise",
                 "processor":"stripe",
-                "destination":"merhant"
+                "destination":"merchant"
             },
             {
                 "store_order_id":"store_order_id_2",
@@ -36,7 +36,7 @@ sqs = {
                 "currency":"USD",
                 "type":"fee",
                 "processor":"braintree",
-                "destination":"merhant"
+                "destination":"merchant"
             }]
         }
     ]

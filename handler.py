@@ -3,12 +3,17 @@ import logging
 import json
 import uuid
 from datetime import date
-from db import conn
+import utils
+import mysql.connector
+import os
+
+
 
 def addPayment(event, context):
     """
     This function adds new payments
     """
+    conn = mysql.connector.connect(**config)
     paymentRecord = event['Records'][0]
     order_id =   paymentRecord["order_id"]
     paymentMethods = paymentRecord["payment_methods"]   
@@ -37,17 +42,33 @@ def addPayment(event, context):
     
     return "done"
 
-def getPaymentById(event, context):
+def getPaymentById(event,context):
     """
     This function retrieves payment by id
     """
+    results =  utils.db_read('SELECT test.payments.payment_id,order_id,store_order_id,user_id,test.payments.created_date,updated_date,'
+        +'authorized_date,processor,status,type,amount,currency FROM test.payments '
+        +'inner join test.entries on test.entries.payment_id=test.payments.payment_id ' 
+        + 'where test.payments.payment_id ="' +event["queryStringParameters"]["payment_id"]+'"')
+   
+    print(results)
+    return json.dumps(results, default=str)
+        
+
+def getPaymentByIdNew(event, context):
+    """
+    This function retrieves payment by id
+    """
+    conn = mysql.connector.connect(**config)
+    response = {}
+    if conn is None:
+        return response
     with conn.cursor() as cur:
         cur.execute('SELECT test.payments.payment_id,order_id,store_order_id,user_id,test.payments.created_date,updated_date,'
         +'authorized_date,processor,status,type,amount,currency FROM test.payments '
         +'inner join test.entries on test.entries.payment_id=test.payments.payment_id ' 
         + 'where test.payments.payment_id ="' +event["queryStringParameters"]["payment_id"]+'"')
         records = cur.fetchall()
-        response = {}
         if cur.rowcount > 0:
             result = records[0]
             response["payment_id"] = result[0]
@@ -64,5 +85,5 @@ def getPaymentById(event, context):
             response["currency"] = result[11]
     conn.close()
         
-    
+
     return response
